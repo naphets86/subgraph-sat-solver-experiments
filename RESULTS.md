@@ -1,6 +1,6 @@
 ﻿# Subgraph-SAT-Solver: Umfassende Experiment-Analyse
 
-**Autor**: Stephan Epp (hjstephan86)  
+**Autor**: Stephan Epp (naphets86)  
 **Projekt**: Subgraph-SAT-Solver Boolean Circuit Experiment Framework  
 **Datum**: 14. Juli 2026  
 **Sprache**: Deutsch
@@ -626,11 +626,11 @@ Das Subgraph-SAT-Solver Experiment Framework hat erfolgreich demonstriert:
 
 ### Stärken der Experimente
 
-- ✅ Umfassend: 3 Circuit-Typen, 4 Test-Suites, 288 Instanzen
-- ✅ Methodologisch sauber: Reproduzierbare Messungen, statistisch validiert
-- ✅ Visuell dokumentiert: 6 verschiedene Plot-Typen pro Suite
-- ✅ Well-structured: Klare Experiment-Design mit Presets
-- ✅ Industrial-Relevant: Inkl. ISCAS'85 Standard Benchmarks
+- Umfassend: 3 Circuit-Typen, 4 Test-Suites, 288 Instanzen
+- Methodologisch sauber: Reproduzierbare Messungen, statistisch validiert
+- Visuell dokumentiert: 6 verschiedene Plot-Typen pro Suite
+- Well-structured: Klare Experiment-Design mit Presets
+- Industrial-Relevant: Inkl. ISCAS'85 Standard Benchmarks
 
 ### Limitationen & Offene Fragen
 
@@ -859,10 +859,10 @@ performance_results/
 ### Qualität der Daten
 
 Die Experiment-Datensätze sind:
-- ✅ **Vollständig**: Alle Felder ausgefüllt für alle 288 Instanzen
-- ✅ **Konsistent**: Keine Ausreißer oder Anomalien erkannt
-- ✅ **Reproduzierbar**: Identische Messungen über Suites hinweg
-- ✅ **Dokumentiert**: Klare Metadaten für jedes Experiment
+- **Vollständig**: Alle Felder ausgefüllt für alle 288 Instanzen
+- **Konsistent**: Keine Ausreißer oder Anomalien erkannt
+- **Reproduzierbar**: Identische Messungen über Suites hinweg
+- **Dokumentiert**: Klare Metadaten für jedes Experiment
 
 ### Generalisierbarkeit der Ergebnisse
 
@@ -902,6 +902,6 @@ Diese Experiment-Sammlung wird als Basis verwendet für:
 ---
 
 **Dokument erstellt**: 14. Juli 2026    
-**Zugriff**: https://github.com/hjstephan86/subgraph-sat-solver-experiments
+**Zugriff**: https://github.com/naphets86/subgraph-sat-solver-experiments
 
 
