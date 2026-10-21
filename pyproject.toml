@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "subgraph-sat-solver-experiments"
+version = "2.0.0"
+description = "Experiment-Framework zur Performance-Analyse des Subgraph-SAT-Solvers anhand von Boolean Circuits"
+authors = [
+    {name = "Stephan Epp"}
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "psutil>=5.9.0",
+    "pytest",
+    "pytest-cov",
+]
+paper = [
+    "pandas>=2.0.0",
+    "scipy>=1.10.0",
+]
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.setuptools.package-data]
+src = ["iscas85/*.bench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = [
+    "-v",
+    "--cov=src",
+    "--cov-report=html:doc/coverage",
+    "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "tests/*",
+    "venv/*",
+    "doc/*",
+    "src/paper_analysis.py",
+    "src/quick_start.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]

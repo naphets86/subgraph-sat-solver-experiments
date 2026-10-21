@@ -1,0 +1,111 @@
+{
+  "baseline": {
+    "SubgraphSATSolver": {
+      "n": 30,
+      "median": 8.43,
+      "std": 1.8
+    },
+    "reference-cdcl": {
+      "n": 30,
+      "median": 56.18,
+      "std": 14.63
+    }
+  },
+  "depth_fit": {
+    "slope_ms_per_lit": 0.17373561800178902,
+    "intercept": -19.310311879864656,
+    "r2": 0.9356292933069691
+  },
+  "iscas_fit": {
+    "exponent": 2.0797986083594,
+    "se": 0.06815598903266447,
+    "r2": 0.9957227571744333,
+    "intercept": -8.684240226048598,
+    "points": [
+      "c432",
+      "c499",
+      "c880",
+      "c1355",
+      "c1908",
+      "c2670"
+    ]
+  },
+  "status_counts": {
+    "target_and|SubgraphSATSolver|SAT": 9,
+    "target_and|SubgraphSATSolver|UNSAT": 0,
+    "target_and|SubgraphSATSolver|TIMEOUT": 0,
+    "target_and|SubgraphSATSolver|ERROR": 0,
+    "target_and|reference-cdcl|SAT": 9,
+    "target_and|reference-cdcl|UNSAT": 0,
+    "target_and|reference-cdcl|TIMEOUT": 0,
+    "target_and|reference-cdcl|ERROR": 0,
+    "target_and_random|SubgraphSATSolver|SAT": 3,
+    "target_and_random|SubgraphSATSolver|UNSAT": 9,
+    "target_and_random|SubgraphSATSolver|TIMEOUT": 0,
+    "target_and_random|SubgraphSATSolver|ERROR": 0,
+    "target_and_random|reference-cdcl|SAT": 3,
+    "target_and_random|reference-cdcl|UNSAT": 9,
+    "target_and_random|reference-cdcl|TIMEOUT": 0,
+    "target_and_random|reference-cdcl|ERROR": 0,
+    "iscas85|SubgraphSATSolver|SAT": 8,
+    "iscas85|SubgraphSATSolver|UNSAT": 0,
+    "iscas85|SubgraphSATSolver|TIMEOUT": 0,
+    "iscas85|SubgraphSATSolver|ERROR": 4,
+    "iscas85|reference-cdcl|SAT": 12,
+    "iscas85|reference-cdcl|UNSAT": 0,
+    "iscas85|reference-cdcl|TIMEOUT": 0,
+    "iscas85|reference-cdcl|ERROR": 0,
+    "miter|SubgraphSATSolver|SAT": 0,
+    "miter|SubgraphSATSolver|UNSAT": 3,
+    "miter|SubgraphSATSolver|TIMEOUT": 5,
+    "miter|SubgraphSATSolver|ERROR": 1,
+    "miter|reference-cdcl|SAT": 0,
+    "miter|reference-cdcl|UNSAT": 9,
+    "miter|reference-cdcl|TIMEOUT": 0,
+    "miter|reference-cdcl|ERROR": 0,
+    "scaling|SubgraphSATSolver|SAT": 1,
+    "scaling|SubgraphSATSolver|UNSAT": 0,
+    "scaling|SubgraphSATSolver|TIMEOUT": 0,
+    "scaling|SubgraphSATSolver|ERROR": 1,
+    "scaling|reference-cdcl|SAT": 2,
+    "scaling|reference-cdcl|UNSAT": 0,
+    "scaling|reference-cdcl|TIMEOUT": 0,
+    "scaling|reference-cdcl|ERROR": 0
+  },
+  "target_and_SubgraphSATSolver": {
+    "spearman": 0.8833333333333333,
+    "slope_ms_per_m": 0.6550833333333331,
+    "intercept": 5.495666666666666,
+    "r2": 0.8355958465848858,
+    "min": 8.53,
+    "max": 19.02
+  },
+  "depth_SubgraphSATSolver": {
+    "spearman": 0.9930069930069931,
+    "slope_ms_per_d": 3.7340209790209777,
+    "r2": 0.9532043559017183,
+    "min": 14.59,
+    "max": 60.04
+  },
+  "target_and_reference-cdcl": {
+    "spearman": -0.41666666666666663,
+    "slope_ms_per_m": -0.4061666666666672,
+    "intercept": 53.60511111111112,
+    "r2": 0.09319488125868136,
+    "min": 41.02,
+    "max": 65.36
+  },
+  "depth_reference-cdcl": {
+    "spearman": 0.3426573426573427,
+    "slope_ms_per_d": 0.32937062937062855,
+    "r2": 0.14491371957857968,
+    "min": 42.28,
+    "max": 53.58
+  },
+  "total_runs": {
+    "SubgraphSATSolver": 933,
+    "reference-cdcl": 1257
+  },
+  "both_decided": 33,
+  "disagree": []
+}

@@ -9,47 +9,22 @@ import subprocess
 import sys
 from pathlib import Path
 
+from src import SRC_DIR
+
+PROJECT_ROOT = SRC_DIR.parent
+RUN_MODULE = 'src.run_experiments'
+
 
 class QuickStart:
     """Interaktives Quick-Start Interface"""
-    
+
     PRESETS = {
-        'quick': {
-            'name': 'Quick Test (2 min)',
-            'args': [
-                '--scaling-experiment', 'sequential',
-                '--max-size', '30', '--step', '10',
-                '--output-dir', './quick_results'
-            ]
-        },
-        'standard': {
-            'name': 'Standard Suite (10 min)',
-            'args': [
-                '--benchmark-suite',
-                '--base-size', '10', '--repeats', '2',
-                '--output-dir', './standard_results'
-            ]
-        },
-        'full': {
-            'name': 'Full Suite (30+ min)',
-            'args': [
-                '--full-suite',
-                '--base-size', '10', '--max-size', '100', '--step', '15',
-                '--repeats', '2',
-                '--output-dir', './full_results'
-            ]
-        },
-        'performance': {
-            'name': 'Performance Analysis (20 min)',
-            'args': [
-                '--full-suite',
-                '--base-size', '5', '--max-size', '150', '--step', '25',
-                '--repeats', '3',
-                '--output-dir', './performance_results'
-            ]
-        }
+        'quick': {'name': 'Quick (Funktionstest, 5 Wiederholungen)', 'args': ['--preset', 'quick']},
+        'standard': {'name': 'Standard (Exp. 1-3 + Miter, 15 Wiederholungen)', 'args': ['--preset', 'standard']},
+        'full': {'name': 'Full (Exp. 1-3, Miter, Skalierung, 30 Wiederholungen)', 'args': ['--preset', 'full']},
+        'scaling': {'name': 'Skalierung bis 10^5 Gates', 'args': ['--preset', 'scaling']},
     }
-    
+
     @staticmethod
     def print_header():
         """Gibt Willkommens-Text aus"""
@@ -66,7 +41,7 @@ class QuickStart:
         for i, (key, preset) in enumerate(QuickStart.PRESETS.items(), 1):
             print(f"  {i}. {preset['name']}")
         
-        print(f"  5. Custom configuration")
+        print(f"  5. Custom configuration (Wiederholungen, Timeout, Vergleichssolver)")
         print(f"  6. Visualize existing results")
         print(f"  0. Exit\n")
         
@@ -99,7 +74,7 @@ class QuickStart:
             return
         
         preset = QuickStart.PRESETS[key]
-        args = [sys.executable, 'run_experiments.py'] + preset['args']
+        args = [sys.executable, '-m', RUN_MODULE] + preset['args']
         
         if solver_path != "SubgraphSATSolver":
             args.extend(['--solver-path', solver_path])
@@ -118,7 +93,7 @@ class QuickStart:
             return
         
         print("\n" + "-" * 70)
-        subprocess.run(args)
+        subprocess.run(args, cwd=PROJECT_ROOT)
     
     @staticmethod
     def run_custom(solver_path: str):
@@ -126,80 +101,46 @@ class QuickStart:
         print("\n" + "="*70)
         print("CUSTOM CONFIGURATION")
         print("="*70 + "\n")
-        
-        print("Experiment Type:")
-        print("  1. Scaling (single circuit type)")
-        print("  2. Benchmark Suite")
-        print("  3. Full Suite (Benchmark + Scaling)")
-        
-        exp_type = input("\nSelect (1-3): ").strip()
-        
-        args = [sys.executable, 'run_experiments.py']
-        
-        if exp_type == '1':
-            print("\nCircuit Type:")
-            print("  1. Sequential")
-            print("  2. Parallel")
-            print("  3. Grid")
-            print("  4. Random")
-            
-            circuit_choice = input("Select (1-4): ").strip()
-            circuit_map = {'1': 'sequential', '2': 'parallel', '3': 'grid', '4': 'random'}
-            
-            if circuit_choice in circuit_map:
-                circuit_type = circuit_map[circuit_choice]
-                max_size = input("Max size (default 100): ").strip() or "100"
-                step = input("Step (default 10): ").strip() or "10"
-                
-                args.extend([
-                    '--scaling-experiment', circuit_type,
-                    '--max-size', max_size,
-                    '--step', step
-                ])
-        
-        elif exp_type == '2':
-            base_size = input("Base size (default 10): ").strip() or "10"
-            repeats = input("Repeats (default 3): ").strip() or "3"
-            
-            args.extend([
-                '--benchmark-suite',
-                '--base-size', base_size,
-                '--repeats', repeats
-            ])
-        
-        elif exp_type == '3':
-            base_size = input("Base size (default 10): ").strip() or "10"
-            max_size = input("Max size (default 100): ").strip() or "100"
-            step = input("Step (default 10): ").strip() or "10"
-            repeats = input("Repeats (default 2): ").strip() or "2"
-            
-            args.extend([
-                '--full-suite',
-                '--base-size', base_size,
-                '--max-size', max_size,
-                '--step', step,
-                '--repeats', repeats
-            ])
-        
-        output_dir = input("\nOutput directory (default ./custom_results): ").strip() or "./custom_results"
-        args.extend(['--output-dir', output_dir])
-        
+
+        names = list(QuickStart.PRESETS)
+        for i, key in enumerate(names, 1):
+            print(f"  {i}. {QuickStart.PRESETS[key]['name']}")
+        choice = input(f"\nPreset (1-{len(names)}, default 2): ").strip() or "2"
+        if not choice.isdigit() or not 1 <= int(choice) <= len(names):
+            print("Invalid preset")
+            return
+        args = [sys.executable, '-m', RUN_MODULE, '--preset', names[int(choice) - 1]]
+
+        repetitions = input("Wiederholungen (Enter = Preset-Wert): ").strip()
+        if repetitions:
+            args.extend(['--repetitions', repetitions])
+        timeout = input("Timeout je Lauf in s (Enter = Preset-Wert): ").strip()
+        if timeout:
+            args.extend(['--timeout', timeout])
+        if input("Eingebauten Referenzsolver zum Vergleich verwenden? (y/n): ").strip().lower() == 'y':
+            args.append('--with-reference')
+        extra = input("Weitere Vergleichssolver (Kommandos, mit Leerzeichen getrennt, z. B. 'minisat cadical'): ").split()
+        for cmd in extra:
+            args.extend(['--with-solver', cmd])
+
+        output_dir = input("\nOutput directory (default src/results/v2/<preset>): ").strip()
+        if output_dir:
+            args.extend(['--output-dir', output_dir])
+
         if solver_path != "SubgraphSATSolver":
             args.extend(['--solver-path', solver_path])
-        
+
         print(f"\n{'='*70}")
         print("Command:")
         print(f"  {' '.join(args)}\n")
-        
-        confirm = input("Start experiments? (y/n): ").strip().lower()
-        
-        if confirm != 'y':
+
+        if input("Start experiments? (y/n): ").strip().lower() != 'y':
             print("Cancelled.")
             return
-        
+
         print("\n" + "-" * 70)
-        subprocess.run(args)
-    
+        subprocess.run(args, cwd=PROJECT_ROOT)
+
     @staticmethod
     def visualize_results(solver_path: str):
         """Visualisierung von existierenden Ergebnissen"""
@@ -207,7 +148,9 @@ class QuickStart:
         print("VISUALIZE RESULTS")
         print("="*70 + "\n")
         
-        json_file = input("Path to experiment_results.json: ").strip()
+        default_json = SRC_DIR / "results" / "v2" / "standard" / "experiment_results.json"
+        json_file = input(f"Path to experiment_results.json (default {default_json.relative_to(PROJECT_ROOT)}): ").strip() or str(default_json)
+        json_file = str(Path(json_file).resolve())
         
         if not Path(json_file).exists():
             print(f"Error: {json_file} not found")
@@ -217,7 +160,7 @@ class QuickStart:
         format_list = formats.split()
         
         args = [
-            sys.executable, 'run_experiments.py',
+            sys.executable, '-m', RUN_MODULE,
             '--visualize', json_file,
             '--formats'
         ] + format_list
@@ -236,7 +179,7 @@ class QuickStart:
             return
         
         print("\n" + "-" * 70)
-        subprocess.run(args)
+        subprocess.run(args, cwd=PROJECT_ROOT)
     
     @staticmethod
     def main():
@@ -244,9 +187,8 @@ class QuickStart:
         QuickStart.print_header()
         
         # Prüfe ob run_experiments.py existiert
-        if not Path('run_experiments.py').exists():
-            print("Error: run_experiments.py not found!")
-            print("Please ensure you're in the correct directory.")
+        if not (SRC_DIR / 'run_experiments.py').exists():
+            print("Error: src/run_experiments.py not found!")
             sys.exit(1)
         
         # Solver-Pfad
@@ -266,7 +208,7 @@ class QuickStart:
             elif choice == '3':
                 QuickStart.run_preset('full', solver_path)
             elif choice == '4':
-                QuickStart.run_preset('performance', solver_path)
+                QuickStart.run_preset('scaling', solver_path)
             elif choice == '5':
                 QuickStart.run_custom(solver_path)
             elif choice == '6':

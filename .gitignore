@@ -1,2 +1,18 @@
+.vscode/
+.coverage
+**/__pycache__/
+**/*.egg-info/
 venv/
-__pycache__/**
+.venv/
+build/
+dist/
+
+# LaTeX-Hilfsdateien (science/)
+science/*.aux
+science/*.log
+science/*.out
+science/*.toc
+science/*.fls
+science/*.fdb_latexmk
+science/*.synctex.gz
+science/_build.*

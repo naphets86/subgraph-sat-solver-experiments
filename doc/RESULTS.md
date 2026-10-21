@@ -1,4 +1,4 @@
-﻿# Subgraph-SAT-Solver: Umfassende Experiment-Analyse
+# Subgraph-SAT-Solver: Umfassende Experiment-Analyse
 
 **Autor**: Stephan Epp (naphets86)  
 **Projekt**: Subgraph-SAT-Solver Boolean Circuit Experiment Framework  
@@ -55,10 +55,10 @@ Das Subgraph-SAT-Solver Experiment Framework wurde entwickelt, um:
 
 Das Framework besteht aus vier Hauptkomponenten:
 
-1. **boolean_circuits.py**: Synthese von Boolean Circuits mit verschiedenen Strukturen
-2. **experiment_runner.py**: Ausführung und Datenerfassung von Benchmark-Läufen
-3. **visualizer.py**: Automatische Erstellung von matplotlib-basierten Visualisierungen
-4. **quick_start.py**: Interaktive Benutzeroberfläche für Experiment-Konfiguration
+1. **src/boolean_circuits.py**: Synthese von Boolean Circuits mit verschiedenen Strukturen
+2. **src/experiment_runner.py**: Ausführung und Datenerfassung von Benchmark-Läufen
+3. **src/visualizer.py**: Automatische Erstellung von matplotlib-basierten Visualisierungen
+4. **src/quick_start.py**: Interaktive Benutzeroberfläche für Experiment-Konfiguration
 
 ---
 
@@ -123,7 +123,7 @@ Das Framework besteht aus vier Hauptkomponenten:
 
 ## Experiment-Suites
 
-### Suite 1: Quick Test (quick_results/)
+### Suite 1: Quick Test (src/results/quick/)
 
 **Zweck**: Schnelle Validierung der Setup und Baseline-Performance
 
@@ -148,7 +148,7 @@ Target-AND-Random: 12 runs, avg 25.72 ms ± 7.02 ms
 
 ---
 
-### Suite 2: Standard Suite (standard_results/)
+### Suite 2: Standard Suite (src/results/standard/)
 
 **Zweck**: Ausgewogene Validierung mit allen Circuit-Typen
 
@@ -175,7 +175,7 @@ ISCAS'85:           12 runs, avg 22.08 ms ± 8.12 ms
 
 ---
 
-### Suite 3: Full Suite (full_results/)
+### Suite 3: Full Suite (src/results/full/)
 
 **Zweck**: Umfassende Analyse mit Skalierungsstudien
 
@@ -202,7 +202,7 @@ ISCAS'85:            12 runs, avg 19.23 ms ± 5.71 ms
 
 ---
 
-### Suite 4: Performance Analysis (performance_results/)
+### Suite 4: Performance Analysis (src/results/performance/)
 
 **Zweck**: Detaillierte Performance-Characterisierung mit fokussierter Analyse
 
@@ -688,22 +688,22 @@ Das Subgraph-SAT-Solver Experiment Framework hat erfolgreich demonstriert:
 Die Analyse basiert auf folgenden Experiment-Datensätzen:
 
 ```
-quick_results/
+src/results/quick/
 ├── experiment_results.json (21 Experiments)
 ├── experiment_results.csv
 └── plots/ (6 Visualisierungen)
 
-standard_results/
+src/results/standard/
 ├── experiment_results.json (33 Experiments)
 ├── experiment_results.csv
 └── plots/ (6 Visualisierungen)
 
-full_results/
+src/results/full/
 ├── experiment_results.json (117 Experiments)
 ├── experiment_results.csv
 └── plots/ (6 Visualisierungen)
 
-performance_results/
+src/results/performance/
 ├── experiment_results.json (117 Experiments)
 ├── experiment_results.csv
 └── plots/ (6 Visualisierungen)

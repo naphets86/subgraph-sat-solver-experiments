@@ -10,12 +10,17 @@ Generiert die EXAKTEN Boolean Circuits aus der Masterarbeit:
 Basiert auf: Epp, S. (2013). "Learning M-DNF in Boolean Circuits"
 """
 
-from typing import List, Tuple, Set, Dict, Optional
+from typing import List, Tuple, Set, Dict, Optional, Sequence
 from pathlib import Path
 import random
 import math
 from dataclasses import dataclass
 from enum import Enum
+
+from src import ISCAS85_DIR
+from src.cnf import CNF, gate_clauses
+
+CONSTRAINTS = ("none", "output", "all_outputs")
 
 
 class CircuitType(Enum):
@@ -30,11 +35,21 @@ class CircuitType(Enum):
     PARALLEL = "parallel"
     GRID = "grid"
     RANDOM = "random"
+    MITER = "miter"                     # Äquivalenzprüfung zweier Circuits (UNSAT bei Gleichheit)
+
+
+_COMMENT_VALUE_MAX = 200
 
 
 @dataclass
 class BooleanCircuit:
-    """Repräsentation eines Boolean Circuits"""
+    """Repräsentation eines Boolean Circuits.
+
+    Knotennummerierung: Eingang ``n < num_inputs``, Gate ``g`` (0-basiert in
+    ``gates``) hat die Knotennummer ``num_inputs + g``. Gate-Eingänge sind
+    Knotennummern früherer Knoten (topologische Reihenfolge).
+    ``outputs`` enthält die Knotennummern der Ausgänge (Standard: letztes Gate).
+    """
     gates: List[Tuple[str, List[int]]]  # [(gate_type, input_indices), ...]
     num_inputs: int
     num_outputs: int
@@ -42,69 +57,142 @@ class BooleanCircuit:
     size: int
     name: str = ""
     metadata: Dict = None  # Zusätzliche Informationen (z.B. depth, m, etc.)
-    
+    outputs: Optional[List[int]] = None
+    input_names: Optional[List[str]] = None
+    output_names: Optional[List[str]] = None
+
     def __post_init__(self):
         self.num_gates = len(self.gates)
         if self.metadata is None:
             self.metadata = {}
-    
-    def to_dimacs(self) -> str:
-        """Konvertiert Circuit zu DIMACS CNF Format"""
-        clauses = []
-        num_vars = self.num_inputs + self.num_gates + 1
-        
-        for gate_idx, (gate_type, inputs) in enumerate(self.gates):
-            gate_var = self.num_inputs + gate_idx + 1
-            input_vars = [i + 1 for i in inputs]
-            
-            # Tseitin-Transformation
-            if gate_type == "AND":
-                clauses.append([-gate_var] + input_vars)
-                for inp in input_vars:
-                    clauses.append([-gate_var, inp])
-                clauses.append([gate_var] + [-i for i in input_vars])
-                
-            elif gate_type == "OR":
-                clauses.append([gate_var] + [-i for i in input_vars])
-                for inp in input_vars:
-                    clauses.append([gate_var, -inp])
-                clauses.append([-gate_var] + input_vars)
-                
-            elif gate_type == "NOT":
-                clauses.append([-gate_var, -input_vars[0]])
-                clauses.append([gate_var, input_vars[0]])
-                
-            elif gate_type == "XOR":
-                a, b = input_vars[0], input_vars[1]
-                clauses.append([gate_var, a, b])
-                clauses.append([gate_var, -a, -b])
-                clauses.append([-gate_var, a, -b])
-                clauses.append([-gate_var, -a, b])
-            
-            elif gate_type == "NAND":
-                clauses.append([gate_var] + [-i for i in input_vars])
-                for inp in input_vars:
-                    clauses.append([gate_var, -inp])
-                clauses.append([-gate_var] + input_vars)
-                
-            elif gate_type == "NOR":
-                clauses.append([-gate_var] + input_vars)
-                for inp in input_vars:
-                    clauses.append([-gate_var, inp])
-                clauses.append([gate_var] + [-i for i in input_vars])
-        
-        num_clauses = len(clauses)
-        dimacs = f"c Circuit: {self.name or self.circuit_type.value}\n"
-        dimacs += f"c Type: {self.circuit_type.value}\n"
-        if self.metadata:
-            for key, value in self.metadata.items():
-                dimacs += f"c {key}: {value}\n"
-        dimacs += f"p cnf {num_vars} {num_clauses}\n"
-        
-        for clause in clauses:
-            dimacs += " ".join(map(str, clause)) + " 0\n"
-        
-        return dimacs
+        if self.outputs is None:
+            self.outputs = [self.num_inputs + self.num_gates - 1] if self.gates else []
+        self.num_outputs = len(self.outputs)
+
+    # ------------------------------------------------------------------ CNF
+    def to_cnf(self, constraint: str = "output") -> CNF:
+        """Tseitin-Kodierung (siehe ``src.cnf``).
+
+        constraint:
+            ``"none"``         keine Ausgangsbedingung (trivial erfüllbar)
+            ``"output"``       erster Ausgang wird per Unit-Klausel auf wahr gesetzt
+            ``"all_outputs"``  alle Ausgänge wahr
+        """
+        if constraint not in CONSTRAINTS:
+            raise ValueError(f"Unbekannte Ausgangsbedingung: {constraint!r} (erlaubt: {CONSTRAINTS})")
+        m = self.num_inputs
+        last = [m + len(self.gates)]
+
+        def new_var() -> int:
+            last[0] += 1
+            return last[0]
+
+        clauses: List[List[int]] = []
+        for idx, (gate_type, inputs) in enumerate(self.gates):
+            clauses.extend(gate_clauses(gate_type, m + idx + 1, [i + 1 for i in inputs], new_var))
+        if constraint == "output" and self.outputs:
+            clauses.append([self.outputs[0] + 1])
+        elif constraint == "all_outputs":
+            clauses.extend([o + 1] for o in self.outputs)
+
+        comments = [f"Circuit: {self.name or self.circuit_type.value}",
+                    f"Type: {self.circuit_type.value}", f"constraint: {constraint}"]
+        for key, value in self.metadata.items():
+            text = str(value).replace("\n", " ")
+            if len(text) <= _COMMENT_VALUE_MAX:
+                comments.append(f"{key}: {text}")
+        return CNF(num_vars=last[0], clauses=clauses, comments=comments)
+
+    def to_dimacs(self, constraint: str = "output") -> str:
+        """DIMACS-Text; Standard ist die Formel mit Ausgangsbedingung."""
+        return self.to_cnf(constraint).to_dimacs()
+
+    # ------------------------------------------------------------ Evaluation
+    def evaluate(self, input_values: Sequence[bool]) -> List[bool]:
+        """Wertet den Circuit aus; liefert die Werte aller Ausgänge."""
+        m = self.num_inputs
+        if len(input_values) != m:
+            raise ValueError(f"{m} Eingabewerte erwartet, erhalten: {len(input_values)}")
+        val = [bool(v) for v in input_values]
+        for gate_type, ins in self.gates:
+            xs = [val[i] for i in ins]
+            t = gate_type.upper()
+            if t in ("BUFF", "BUF"):
+                r = xs[0]
+            elif t == "NOT":
+                r = not xs[0]
+            elif t == "AND":
+                r = all(xs)
+            elif t == "NAND":
+                r = not all(xs)
+            elif t == "OR":
+                r = any(xs)
+            elif t == "NOR":
+                r = not any(xs)
+            elif t == "XOR":
+                r = sum(xs) % 2 == 1
+            elif t == "XNOR":
+                r = sum(xs) % 2 == 0
+            else:
+                raise ValueError(f"Unbekannter Gate-Typ: {gate_type!r}")
+            val.append(r)
+        return [val[o] for o in self.outputs]
+
+    def check_model(self, model: Dict[int, bool], constraint: str = "output") -> bool:
+        """Prüft ein Solver-Modell gegen den *Circuit* (nicht gegen die CNF):
+        Die Eingänge werden aus dem Modell gelesen, der Circuit wird ausgewertet
+        und die Ausgangsbedingung geprüft."""
+        values = [model.get(i + 1, False) for i in range(self.num_inputs)]
+        outs = self.evaluate(values)
+        if constraint == "none" or not outs:
+            return True
+        return outs[0] if constraint == "output" else all(outs)
+
+
+def build_miter(a: BooleanCircuit, b: BooleanCircuit, name: str = "") -> BooleanCircuit:
+    """Miter zweier Circuits: Gemeinsame Eingänge, Ausgang = OR über die XORs
+    entsprechender Ausgänge. Mit Ausgangsbedingung "output" ist die Formel genau
+    dann erfüllbar, wenn sich die Circuits auf mindestens einer Eingabe
+    unterscheiden (UNSAT = funktional äquivalent).
+
+    Eingänge/Ausgänge werden über ihre Namen zugeordnet (falls beide Circuits
+    Namen besitzen und die Namensmengen übereinstimmen), sonst nach Position.
+    """
+    m = a.num_inputs
+    if b.num_inputs != m or len(a.outputs) != len(b.outputs) or not a.outputs:
+        raise ValueError("Miter: Eingangs- und Ausgangszahl müssen übereinstimmen")
+
+    def order(names_a, names_b, n):
+        if names_a and names_b and len(names_a) == n and sorted(names_a) == sorted(names_b):
+            pos = {nm: i for i, nm in enumerate(names_a)}
+            return [pos[nm] for nm in names_b]      # Index in a für das j-te Element von b
+        return list(range(n))
+
+    in_map = order(a.input_names, b.input_names, m)
+    out_map = order(a.output_names, b.output_names, len(a.outputs))
+
+    off = len(a.gates)
+    gates = [(t, list(ins)) for t, ins in a.gates]
+    for t, ins in b.gates:
+        gates.append((t, [in_map[i] if i < m else i + off for i in ins]))
+
+    def b_node(n: int) -> int:
+        return in_map[n] if n < m else n + off
+
+    xors = []
+    for j, bo in enumerate(b.outputs):
+        gates.append(("XOR", [a.outputs[out_map[j]], b_node(bo)]))
+        xors.append(m + len(gates) - 1)
+    if len(xors) > 1:
+        gates.append(("OR", xors))
+    out_node = m + len(gates) - 1
+    return BooleanCircuit(
+        gates=gates, num_inputs=m, num_outputs=1, circuit_type=CircuitType.MITER,
+        size=len(gates), name=name or f"Miter_{a.name}_{b.name}",
+        metadata={"a": a.name, "b": b.name, "compared_outputs": len(xors)},
+        outputs=[out_node],
+        input_names=list(a.input_names) if a.input_names else None,
+    )
 
 
 # ============================================================================
@@ -241,10 +329,11 @@ class TargetANDCircuitGenerator:
             circuit_type=CircuitType.TARGET_AND,
             size=len(adjusted_gates),
             name=f"TargetAND_m{m}",
+            outputs=[output_idx],
             metadata={
                 "m": m,
                 "lbv_rounds": TargetANDCircuitGenerator.lbv_round_count(m),
-                "satisfying_assignment": str(target)
+                **({"satisfying_assignment": str(target)} if m <= 64 else {}),
             }
         )
     
@@ -331,6 +420,7 @@ class TargetANDCircuitGenerator:
             circuit_type=CircuitType.TARGET_AND_RANDOM,
             size=len(gates),
             name=f"TargetAND_m{m}_d{depth}",
+            outputs=[output_idx],
             metadata={
                 "m": m,
                 "depth": depth,
@@ -371,73 +461,84 @@ class MasterarbeitBenchmark:
         return circuits
     
     @staticmethod
-    def load_bench_file(file_path: Path) -> BooleanCircuit:
-        """Parst eine Standard-.bench-Datei in ein BooleanCircuit-Objekt"""
-        gates = []
-        inputs = []
-        outputs = []
-        wire_map: Dict[str, int] = {}
-        
-        def get_wire_id(name: str) -> int:
-            name = name.strip()
-            if name not in wire_map:
-                wire_map[name] = len(wire_map)
-            return wire_map[name]
+    def parse_bench(text: str, name: str = "bench") -> BooleanCircuit:
+        """Parst eine ISCAS-.bench-Beschreibung.
 
-        with open(file_path, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                
-                if line.upper().startswith("INPUT"):
-                    name = line.split("(")[1].split(")")[0]
-                    inputs.append(get_wire_id(name))
-                    
-                elif line.upper().startswith("OUTPUT"):
-                    name = line.split("(")[1].split(")")[0]
-                    outputs.append(get_wire_id(name))
-                    
-                elif "=" in line:
-                    out_part, gate_part = line.split("=")
-                    out_wire = get_wire_id(out_part)
-                    
-                    gate_type = gate_part.split("(")[0].strip().upper()
-                    in_parts = gate_part.split("(")[1].split(")")[0].split(",")
-                    in_wires = [get_wire_id(p) for p in in_parts if p.strip()]
-                    
-                    gates.append((gate_type, in_wires, out_wire))
+        Knotennummern: Eingänge in Deklarationsreihenfolge, danach die Gates in
+        topologischer Reihenfolge. Gate-Typen werden unverändert übernommen
+        (AND, NAND, OR, NOR, XOR, XNOR, NOT, BUFF). Die Ausgänge werden über ihre
+        Signalnamen aufgelöst (``outputs``).
+        """
+        inputs: List[str] = []
+        outputs: List[str] = []
+        defs: Dict[str, Tuple[str, List[str]]] = {}
+        order: List[str] = []
+        for lineno, raw in enumerate(text.splitlines(), 1):
+            line = raw.split("#", 1)[0].strip()
+            if not line:
+                continue
+            up = line.upper()
+            if up.startswith("INPUT"):
+                inputs.append(line[line.index("(") + 1:line.rindex(")")].strip())
+            elif up.startswith("OUTPUT"):
+                outputs.append(line[line.index("(") + 1:line.rindex(")")].strip())
+            elif "=" in line:
+                lhs, rhs = line.split("=", 1)
+                lhs = lhs.strip()
+                gate_type = rhs[:rhs.index("(")].strip().upper()
+                if gate_type == "BUF":
+                    gate_type = "BUFF"
+                args = [a.strip() for a in rhs[rhs.index("(") + 1:rhs.rindex(")")].split(",") if a.strip()]
+                if lhs in defs or lhs in inputs:
+                    raise ValueError(f"{name}, Zeile {lineno}: Signal {lhs!r} doppelt definiert")
+                defs[lhs] = (gate_type, args)
+                order.append(lhs)
+            else:
+                raise ValueError(f"{name}, Zeile {lineno}: nicht erkannt: {raw!r}")
 
-        num_inputs = len(inputs)
-        sorted_gates = [None] * len(gates)
-        
-        for g_type, g_ins, g_out in gates:
-            gate_pos = g_out - num_inputs
-            if 0 <= gate_pos < len(sorted_gates):
-                adj_ins = [i for i in g_ins]
-                sorted_gates[gate_pos] = (g_type, adj_ins)
-        
-        final_gates = [g for g in sorted_gates if g is not None]
+        node: Dict[str, int] = {n: i for i, n in enumerate(inputs)}
+        m = len(inputs)
+        gates: List[Tuple[str, List[int]]] = []
+        pending = order
+        while pending:                                  # topologische Sortierung
+            rest = []
+            for sig in pending:
+                gate_type, args = defs[sig]
+                if all(a in node for a in args):
+                    node[sig] = m + len(gates)
+                    gates.append((gate_type, [node[a] for a in args]))
+                else:
+                    rest.append(sig)
+            if len(rest) == len(pending):
+                missing = {a for s_ in rest for a in defs[s_][1] if a not in node and a not in defs}
+                raise ValueError(f"{name}: undefinierte Signale oder Zyklus: {sorted(missing)[:5] or rest[:5]}")
+            pending = rest
+        for o in outputs:
+            if o not in node:
+                raise ValueError(f"{name}: Ausgang {o!r} nicht definiert")
 
         return BooleanCircuit(
-            gates=final_gates,
-            num_inputs=num_inputs,
-            num_outputs=len(outputs),
-            circuit_type=CircuitType.ISCAS85,
-            size=len(final_gates),
-            name=file_path.stem,
-            metadata={"benchmark": "ISCAS'85", "original_file": file_path.name}
+            gates=gates, num_inputs=m, num_outputs=len(outputs),
+            circuit_type=CircuitType.ISCAS85, size=len(gates), name=name,
+            metadata={"benchmark": "ISCAS'85"},
+            outputs=[node[o] for o in outputs],
+            input_names=list(inputs), output_names=list(outputs),
         )
 
     @staticmethod
+    def load_bench_file(file_path: Path) -> BooleanCircuit:
+        """Lädt eine Standard-.bench-Datei als BooleanCircuit."""
+        file_path = Path(file_path)
+        c = MasterarbeitBenchmark.parse_bench(file_path.read_text(encoding="utf-8"), file_path.stem)
+        c.metadata["original_file"] = file_path.name
+        return c
+
+    @staticmethod
     def exp3_iscas85() -> List[BooleanCircuit]:
-        """Lädt automatisch alle .bench-Dateien aus dem ./iscas85/ Ordner"""
+        """Lädt automatisch alle .bench-Dateien aus dem Ordner src/iscas85/"""
         circuits = []
-        iscas_dir = Path(__file__).parent / "iscas85"
+        iscas_dir = ISCAS85_DIR
         
-        if not iscas_dir.exists():
-            iscas_dir = Path("iscas85")
-            
         if not iscas_dir.exists():
             print(f"[Warning] Ordner {iscas_dir} nicht gefunden!")
             return circuits

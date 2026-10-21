@@ -1,0 +1,98 @@
+======================================================================
+SUBGRAPH-SAT-SOLVER EXPERIMENT SUITE
+======================================================================
+
+============================================================
+PRESET full: Exp. 1-3, Miter und Skalierung, 30 Wiederholungen
+============================================================
+Basislinie SubgraphSATSolver (triviale Instanz, n=30): Median 8.43 ms, s=1.80 ms
+Basislinie reference-cdcl (triviale Instanz, n=30): Median 56.18 ms, s=14.63 ms
+  [SubgraphSATSolver] TargetAND_m4 (7 Gates)... SAT n=30 Median 9.52 ms
+  [reference-cdcl] TargetAND_m4 (7 Gates)... SAT n=30 Median 48.79 ms
+  [SubgraphSATSolver] TargetAND_m6 (11 Gates)... SAT n=30 Median 8.53 ms
+  [reference-cdcl] TargetAND_m6 (11 Gates)... SAT n=30 Median 45.98 ms
+  [SubgraphSATSolver] TargetAND_m8 (15 Gates)... SAT n=30 Median 10.11 ms
+  [reference-cdcl] TargetAND_m8 (15 Gates)... SAT n=30 Median 51.91 ms
+  [SubgraphSATSolver] TargetAND_m10 (19 Gates)... SAT n=30 Median 13.01 ms
+  [reference-cdcl] TargetAND_m10 (19 Gates)... SAT n=30 Median 65.36 ms
+  [SubgraphSATSolver] TargetAND_m12 (23 Gates)... SAT n=30 Median 11.49 ms
+  [reference-cdcl] TargetAND_m12 (23 Gates)... SAT n=30 Median 42.18 ms
+  [SubgraphSATSolver] TargetAND_m14 (27 Gates)... SAT n=30 Median 13.00 ms
+  [reference-cdcl] TargetAND_m14 (27 Gates)... SAT n=30 Median 51.86 ms
+  [SubgraphSATSolver] TargetAND_m16 (31 Gates)... SAT n=30 Median 19.02 ms
+  [reference-cdcl] TargetAND_m16 (31 Gates)... SAT n=30 Median 41.02 ms
+  [SubgraphSATSolver] TargetAND_m18 (35 Gates)... SAT n=30 Median 17.65 ms
+  [reference-cdcl] TargetAND_m18 (35 Gates)... SAT n=30 Median 46.28 ms
+  [SubgraphSATSolver] TargetAND_m20 (39 Gates)... SAT n=30 Median 17.88 ms
+  [reference-cdcl] TargetAND_m20 (39 Gates)... SAT n=30 Median 45.20 ms
+  [SubgraphSATSolver] TargetAND_m10_d1 (27 Gates)... SAT n=30 Median 14.59 ms
+  [reference-cdcl] TargetAND_m10_d1 (27 Gates)... SAT n=30 Median 45.36 ms
+  [SubgraphSATSolver] TargetAND_m10_d2 (30 Gates)... UNSAT n=30 Median 16.28 ms
+  [reference-cdcl] TargetAND_m10_d2 (30 Gates)... UNSAT n=30 Median 43.80 ms
+  [SubgraphSATSolver] TargetAND_m10_d3 (33 Gates)... UNSAT n=30 Median 20.35 ms
+  [reference-cdcl] TargetAND_m10_d3 (33 Gates)... UNSAT n=30 Median 44.82 ms
+  [SubgraphSATSolver] TargetAND_m10_d4 (35 Gates)... UNSAT n=30 Median 20.82 ms
+  [reference-cdcl] TargetAND_m10_d4 (35 Gates)... UNSAT n=30 Median 44.12 ms
+  [SubgraphSATSolver] TargetAND_m10_d5 (38 Gates)... UNSAT n=30 Median 25.75 ms
+  [reference-cdcl] TargetAND_m10_d5 (38 Gates)... UNSAT n=30 Median 49.10 ms
+  [SubgraphSATSolver] TargetAND_m10_d6 (40 Gates)... UNSAT n=30 Median 30.06 ms
+  [reference-cdcl] TargetAND_m10_d6 (40 Gates)... UNSAT n=30 Median 48.17 ms
+  [SubgraphSATSolver] TargetAND_m10_d7 (42 Gates)... SAT n=30 Median 32.15 ms
+  [reference-cdcl] TargetAND_m10_d7 (42 Gates)... SAT n=30 Median 42.28 ms
+  [SubgraphSATSolver] TargetAND_m10_d8 (44 Gates)... UNSAT n=30 Median 39.13 ms
+  [reference-cdcl] TargetAND_m10_d8 (44 Gates)... UNSAT n=30 Median 45.35 ms
+  [SubgraphSATSolver] TargetAND_m10_d9 (47 Gates)... UNSAT n=30 Median 37.32 ms
+  [reference-cdcl] TargetAND_m10_d9 (47 Gates)... UNSAT n=30 Median 49.13 ms
+  [SubgraphSATSolver] TargetAND_m10_d10 (49 Gates)... UNSAT n=30 Median 43.30 ms
+  [reference-cdcl] TargetAND_m10_d10 (49 Gates)... UNSAT n=30 Median 46.05 ms
+  [SubgraphSATSolver] TargetAND_m10_d11 (52 Gates)... SAT n=30 Median 47.68 ms
+  [reference-cdcl] TargetAND_m10_d11 (52 Gates)... SAT n=30 Median 53.58 ms
+  [SubgraphSATSolver] TargetAND_m10_d12 (54 Gates)... UNSAT n=30 Median 60.04 ms
+  [reference-cdcl] TargetAND_m10_d12 (54 Gates)... UNSAT n=30 Median 44.42 ms
+  [SubgraphSATSolver] c1355 (546 Gates)... SAT n=13 Median 3945.39 ms
+  [reference-cdcl] c1355 (546 Gates)... SAT n=30 Median 48.84 ms
+  [SubgraphSATSolver] c17 (6 Gates)... SAT n=30 Median 7.24 ms
+  [reference-cdcl] c17 (6 Gates)... SAT n=30 Median 47.31 ms
+  [SubgraphSATSolver] c1908 (880 Gates)... SAT n=6 Median 9931.22 ms
+  [reference-cdcl] c1908 (880 Gates)... SAT n=30 Median 52.76 ms
+  [SubgraphSATSolver] c2670 (1193 Gates)... SAT n=3 Median 20427.66 ms
+  [reference-cdcl] c2670 (1193 Gates)... SAT n=30 Median 70.09 ms
+  [SubgraphSATSolver] c3 (4 Gates)... SAT n=30 Median 6.98 ms
+  [reference-cdcl] c3 (4 Gates)... SAT n=30 Median 45.19 ms
+  [SubgraphSATSolver] c3540 (1669 Gates)... ERROR n=1 Median 26357.62 ms
+  [reference-cdcl] c3540 (1669 Gates)... SAT n=30 Median 72.42 ms
+  [SubgraphSATSolver] c432 (160 Gates)... SAT n=30 Median 515.75 ms
+  [reference-cdcl] c432 (160 Gates)... SAT n=30 Median 71.23 ms
+  [SubgraphSATSolver] c499 (202 Gates)... SAT n=30 Median 1094.34 ms
+  [reference-cdcl] c499 (202 Gates)... SAT n=30 Median 51.71 ms
+  [SubgraphSATSolver] c5315 (2307 Gates)... ERROR n=1 Median 29415.04 ms
+  [reference-cdcl] c5315 (2307 Gates)... SAT n=30 Median 67.58 ms
+  [SubgraphSATSolver] c6288 (2416 Gates)... ERROR n=1 Median 24765.58 ms
+  [reference-cdcl] c6288 (2416 Gates)... SAT n=30 Median 77.80 ms
+  [SubgraphSATSolver] c7552 (3512 Gates)... ERROR n=1 Median 40737.40 ms
+  [reference-cdcl] c7552 (3512 Gates)... SAT n=30 Median 89.88 ms
+  [SubgraphSATSolver] c880 (383 Gates)... SAT n=30 Median 2167.29 ms
+  [reference-cdcl] c880 (383 Gates)... SAT n=30 Median 47.61 ms
+  [SubgraphSATSolver] MiterSelf_TargetAND_m10 (39 Gates)... UNSAT n=30 Median 19.97 ms
+  [reference-cdcl] MiterSelf_TargetAND_m10 (39 Gates)... UNSAT n=30 Median 47.66 ms
+  [SubgraphSATSolver] MiterSelf_TargetAND_m20 (79 Gates)... UNSAT n=30 Median 53.58 ms
+  [reference-cdcl] MiterSelf_TargetAND_m20 (79 Gates)... UNSAT n=30 Median 44.95 ms
+  [SubgraphSATSolver] MiterSelf_c17 (15 Gates)... UNSAT n=30 Median 9.86 ms
+  [reference-cdcl] MiterSelf_c17 (15 Gates)... UNSAT n=30 Median 46.92 ms
+  [SubgraphSATSolver] MiterSelf_c432 (328 Gates)... TIMEOUT n=1 Median 60041.35 ms
+  [reference-cdcl] MiterSelf_c432 (328 Gates)... UNSAT n=30 Median 279.73 ms
+  [SubgraphSATSolver] MiterSelf_c499 (437 Gates)... TIMEOUT n=1 Median 60069.29 ms
+  [reference-cdcl] MiterSelf_c499 (437 Gates)... UNSAT n=30 Median 1853.19 ms
+  [SubgraphSATSolver] MiterSelf_c880 (793 Gates)... TIMEOUT n=1 Median 60114.38 ms
+  [reference-cdcl] MiterSelf_c880 (793 Gates)... UNSAT n=19 Median 3293.14 ms
+  [SubgraphSATSolver] MiterSelf_c1355 (1125 Gates)... TIMEOUT n=1 Median 60273.65 ms
+  [reference-cdcl] MiterSelf_c1355 (1125 Gates)... UNSAT n=7 Median 3139.56 ms
+  [SubgraphSATSolver] MiterSelf_c1908 (1786 Gates)... ERROR n=1 Median 25559.73 ms ✗ UNERWARTETES ERGEBNIS
+  [reference-cdcl] MiterSelf_c1908 (1786 Gates)... UNSAT n=15 Median 3374.42 ms
+  [SubgraphSATSolver] Miter_c499_c1355 (781 Gates)... TIMEOUT n=1 Median 60180.17 ms
+  [reference-cdcl] Miter_c499_c1355 (781 Gates)... UNSAT n=16 Median 1723.69 ms
+  [SubgraphSATSolver] TargetAND_m100 (199 Gates)... SAT n=30 Median 321.23 ms
+  [reference-cdcl] TargetAND_m100 (199 Gates)... SAT n=30 Median 53.56 ms
+  [SubgraphSATSolver] TargetAND_m1000 (1999 Gates)... ERROR n=1 Median 25087.83 ms ✗ UNERWARTETES ERGEBNIS
+  [reference-cdcl] TargetAND_m1000 (1999 Gates)... SAT n=30 Median 102.17 ms
+  [SubgraphSATSolver] TargetAND_m10000 (19999 Gates)...
