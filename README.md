@@ -5,7 +5,7 @@
 [![Test Coverage](https://img.shields.io/badge/Test%20Coverage-72%25-brightgreen)](doc/coverage/index.html)
 [![scicov](https://img.shields.io/badge/scicov-!-ff69b4)](doc/coverage/index.html)
 
-Ein Python-Framework (Version 3.0.0) zur Performance-Analyse und Skalierungsuntersuchung von Boolean Circuits unter Verwendung des Subgraph-SAT-Solvers. Das Tool erzeugt CNF-Instanzen aus Circuits, startet beliebig viele Solver auf denselben Dateien, prüft Status und Modelle, aggregiert Statistiken und exportiert LaTeX-kompatible Grafiken und Tabellen für die wissenschaftliche Arbeit unter [science/](science/).
+Ein Python-Framework zur Performance-Analyse und Skalierungsuntersuchung von Boolean Circuits unter Verwendung des Subgraph-SAT-Solvers. Das Tool erzeugt CNF-Instanzen aus Circuits, startet beliebig viele Solver auf denselben Dateien, prüft Status und Modelle, aggregiert Statistiken und exportiert LaTeX-kompatible Grafiken und Tabellen für die wissenschaftliche Arbeit unter [science/](science/).
 
 ## Inhaltsverzeichnis
 
@@ -263,7 +263,7 @@ pytest
 
 ## Erwerb
 
-Der Preis für diese Software beträgt 3.145.000,00 EUR.
+Der Preis für diese Software beträgt 7.145.000,00 EUR.
 
 ### Zahlungsinformationen
 
