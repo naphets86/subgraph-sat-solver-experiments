@@ -14,5 +14,4 @@ science/*.out
 science/*.toc
 science/*.fls
 science/*.fdb_latexmk
-science/*.synctex.gz
 science/_build.*

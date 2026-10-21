@@ -1,8 +1,8 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}
-% lmodern nicht verfügbar
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -73,20 +73,6 @@
 	{≥}{{$\geq$}}1
 }
 
-\captionsetup{font=small,labelfont=bf}
-% ---------- Deutsche Bezeichnungen (Ersatz für babel-german) ----------
-\addto\captionsenglish{%
-  \renewcommand{\contentsname}{Inhaltsverzeichnis}%
-  \renewcommand{\figurename}{Abbildung}%
-  \renewcommand{\tablename}{Tabelle}%
-  \renewcommand{\abstractname}{Kurzfassung}%
-  \renewcommand{\refname}{Literatur}%
-  \renewcommand{\appendixname}{Anhang}%
-  \renewcommand{\listfigurename}{Abbildungsverzeichnis}%
-  \renewcommand{\listtablename}{Tabellenverzeichnis}%
-  \renewcommand{\proofname}{Beweis}%
-  \renewcommand{\lstlistingname}{Listing}%
-}
 \renewcommand{\sectionautorefname}{Abschnitt}
 \renewcommand{\subsectionautorefname}{Abschnitt}
 \renewcommand{\figureautorefname}{Abbildung}
