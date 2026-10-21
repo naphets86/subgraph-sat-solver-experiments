@@ -6,12 +6,3 @@ venv/
 .venv/
 build/
 dist/
-
-# LaTeX-Hilfsdateien (science/)
-science/*.aux
-science/*.log
-science/*.out
-science/*.toc
-science/*.fls
-science/*.fdb_latexmk
-science/_build.*
